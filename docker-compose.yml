@@ -10,7 +10,7 @@ x-findbug-env: &findbug-env
 
 services:
   web:
-    build: .
+    image: ghcr.io/develonrails/standalone-findbug:latest
     ports:
       - "${PORT:-80}:80"
     environment:
@@ -23,7 +23,7 @@ services:
     restart: unless-stopped
 
   worker:
-    build: .
+    image: ghcr.io/develonrails/standalone-findbug:latest
     command: bundle exec rails solid_queue:start
     environment:
       <<: *findbug-env
