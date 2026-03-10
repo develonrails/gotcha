@@ -4,7 +4,7 @@ Self-hosted error and performance monitoring for Ruby/Rails applications. Compat
 
 ## Origin
 
-Findbug started as a Rails engine gem ([develonrails/findbug](https://github.com/develonrails/findbug)) that embedded error tracking directly into a Rails application. This standalone version extracts it into its own service, adding:
+Originally based on [ITSSOUMIT/findbug](https://github.com/ITSSOUMIT/findbug) by [Soumit Das](https://github.com/ITSSOUMIT) — a Rails engine for embedded error tracking. Our fork ([develonrails/findbug](https://github.com/develonrails/findbug)) extended it with performance monitoring, alert channels, and a dark theme dashboard. This standalone version extracts it into its own service, adding:
 
 - **Multi-project support** — Monitor multiple applications from a single Findbug instance via DSN-based project separation
 - **Sentry SDK compatibility** — Receives data via the standard Sentry envelope protocol (`POST /api/:project_id/envelope/`), so you can use the official `sentry-rails` gem as a client
