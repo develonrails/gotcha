@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require "net/http"
+require "json"
+require "uri"
+
 module Findbug
   module Alerts
     module Channels
@@ -32,6 +36,21 @@ module Findbug
           base_url = ENV.fetch("FINDBUG_BASE_URL", nil)
           return nil unless base_url
           "#{base_url}/errors/#{error_event.id}"
+        end
+
+        def post_webhook(url, payload, headers: {}, read_timeout: 5)
+          uri = URI.parse(url)
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = (uri.scheme == "https")
+          http.open_timeout = 5
+          http.read_timeout = read_timeout
+          request = Net::HTTP::Post.new(uri.request_uri)
+          request["Content-Type"] = "application/json"
+          headers.each { |key, value| request[key] = value }
+          request.body = payload.to_json
+          http.request(request)
+        rescue StandardError => e
+          Findbug.logger.error("[Findbug] #{self.class.name.demodulize} alert failed: #{e.message}")
         end
       end
     end

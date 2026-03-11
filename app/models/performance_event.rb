@@ -130,6 +130,25 @@ class PerformanceEvent < ApplicationRecord
       end
   end
 
+  def self.stats_since(since)
+    events = where("captured_at >= ?", since)
+    result = events.pick(
+      Arel.sql("COUNT(*)"),
+      Arel.sql("AVG(duration_ms)"),
+      Arel.sql("MAX(duration_ms)"),
+      Arel.sql("AVG(query_count)"),
+      Arel.sql("COUNT(*) FILTER (WHERE has_n_plus_one)")
+    )
+    total, avg_duration, max_duration, avg_queries, n_plus_one_count = result
+    {
+      total_requests: total,
+      avg_duration: avg_duration&.round(2) || 0,
+      max_duration: max_duration&.round(2) || 0,
+      avg_queries: avg_queries&.round(1) || 0,
+      n_plus_one_percentage: total.zero? ? 0 : ((n_plus_one_count.to_f / total) * 100).round(1)
+    }
+  end
+
   private
 
   def self.percentile(sorted_array, percentile)

@@ -25,21 +25,34 @@ class DashboardController < ApplicationController
   private
 
   def calculate_stats
+    now_24h = 24.hours.ago
+    now_7d = 7.days.ago
+
     errors = scope_to_project(ErrorEvent)
+    error_counts = errors.pick(
+      Arel.sql("COUNT(*)"),
+      Arel.sql("COUNT(*) FILTER (WHERE status = 'unresolved')"),
+      Arel.sql(ErrorEvent.sanitize_sql([ "COUNT(*) FILTER (WHERE created_at >= ?)", now_24h ])),
+      Arel.sql(ErrorEvent.sanitize_sql([ "COUNT(*) FILTER (WHERE created_at >= ?)", now_7d ]))
+    )
+    total, unresolved, last_24h, last_7d = error_counts
+
     perf = scope_to_project(PerformanceEvent)
+    perf_counts = perf.pick(
+      Arel.sql("COUNT(*)"),
+      Arel.sql(PerformanceEvent.sanitize_sql([ "COUNT(*) FILTER (WHERE captured_at >= ?)", now_24h ])),
+      Arel.sql(PerformanceEvent.sanitize_sql([ "AVG(duration_ms) FILTER (WHERE captured_at >= ?)", now_24h ])),
+      Arel.sql(PerformanceEvent.sanitize_sql([ "COUNT(*) FILTER (WHERE has_n_plus_one AND captured_at >= ?)", now_24h ]))
+    )
+    perf_total, perf_24h, avg_duration, n_plus_one = perf_counts
 
     {
-      errors: {
-        total: errors.count,
-        unresolved: errors.unresolved.count,
-        last_24h: errors.where("created_at >= ?", 24.hours.ago).count,
-        last_7d: errors.where("created_at >= ?", 7.days.ago).count
-      },
+      errors: { total: total, unresolved: unresolved, last_24h: last_24h, last_7d: last_7d },
       performance: {
-        total: perf.count,
-        last_24h: perf.where("captured_at >= ?", 24.hours.ago).count,
-        avg_duration: perf.where("captured_at >= ?", 24.hours.ago).average(:duration_ms)&.round(2) || 0,
-        n_plus_one_count: perf.with_n_plus_one.where("captured_at >= ?", 24.hours.ago).count
+        total: perf_total,
+        last_24h: perf_24h,
+        avg_duration: avg_duration&.round(2) || 0,
+        n_plus_one_count: n_plus_one
       },
       timestamp: Time.current.iso8601
     }

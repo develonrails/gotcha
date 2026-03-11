@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require "net/http"
-require "json"
-require "uri"
-
 module Findbug
   module Alerts
     module Channels
@@ -11,7 +7,7 @@ module Findbug
         def send_alert(error_event)
           webhook_url = config[:webhook_url]
           return if webhook_url.blank?
-          post_to_webhook(webhook_url, build_payload(error_event))
+          post_webhook(webhook_url, build_payload(error_event))
         end
 
         private
@@ -54,20 +50,6 @@ module Findbug
           when "info" then "#17a2b8"
           else "#6c757d"
           end
-        end
-
-        def post_to_webhook(webhook_url, payload)
-          uri = URI.parse(webhook_url)
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = (uri.scheme == "https")
-          http.open_timeout = 5
-          http.read_timeout = 5
-          request = Net::HTTP::Post.new(uri.path)
-          request["Content-Type"] = "application/json"
-          request.body = payload.to_json
-          http.request(request)
-        rescue StandardError => e
-          Findbug.logger.error("[Findbug] Slack alert failed: #{e.message}")
         end
       end
     end

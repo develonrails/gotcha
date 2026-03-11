@@ -41,6 +41,16 @@ class ApplicationController < ActionController::Base
     current_project ? scope.where(project_id: current_project.id) : scope
   end
 
+  def parse_since(value)
+    case value
+    when "1h" then 1.hour.ago
+    when "24h" then 24.hours.ago
+    when "7d" then 7.days.ago
+    when "30d" then 30.days.ago
+    else 24.hours.ago
+    end
+  end
+
   rescue_from ActiveRecord::RecordNotFound do
     flash[:error] = "Record not found"
     redirect_to root_path

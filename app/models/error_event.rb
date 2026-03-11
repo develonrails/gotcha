@@ -34,7 +34,7 @@ class ErrorEvent < ApplicationRecord
     project_id = event_data[:project_id]
 
     transaction do
-      existing = where(fingerprint: fingerprint, project_id: project_id).first
+      existing = find_by(fingerprint: fingerprint, project_id: project_id)
 
       if existing
         existing.occurrence_count += 1
@@ -86,19 +86,19 @@ class ErrorEvent < ApplicationRecord
   end
 
   def user
-    context&.dig("user") || context&.dig(:user)
+    context&.dig("user")
   end
 
   def request
-    context&.dig("request") || context&.dig(:request)
+    context&.dig("request")
   end
 
   def breadcrumbs
-    context&.dig("breadcrumbs") || context&.dig(:breadcrumbs) || []
+    context&.dig("breadcrumbs") || []
   end
 
   def tags
-    context&.dig("tags") || context&.dig(:tags) || {}
+    context&.dig("tags") || {}
   end
 
   def summary

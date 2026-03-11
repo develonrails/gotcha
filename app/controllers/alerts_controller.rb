@@ -7,7 +7,7 @@ class AlertsController < ApplicationController
 
   def index
     @channels = AlertChannel.order(created_at: :asc)
-    @enabled_count = @channels.count(&:enabled?)
+    @enabled_count = @channels.enabled.count
   end
 
   def new

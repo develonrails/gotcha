@@ -63,7 +63,7 @@ sentry-rails SDK  →  POST /api/:project_id/envelope/
                             ↓
                      IngestController (authenticate DSN, parse envelope)
                             ↓
-                     PersistJob (via SolidQueue)
+                     PersistErrorJob / PersistPerformanceJob (via SolidQueue)
                             ↓
                      PostgreSQL (error_events, performance_events)
                             ↓

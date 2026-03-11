@@ -19,7 +19,7 @@
             <td><span class="badge badge-info"><%= project.platform %></span></td>
             <td class="font-mono text-xs text-muted" style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= project.dsn %></td>
             <td class="text-muted text-sm">
-              <%= project.error_events.count %> errors, <%= project.performance_events.count %> perf
+              <%= project.error_count %> errors, <%= project.perf_count %> perf
             </td>
             <td>
               <div style="display: flex; gap: 0.25rem; justify-content: flex-end;">

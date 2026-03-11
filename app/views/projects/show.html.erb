@@ -37,11 +37,11 @@ end</pre>
       <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
         <div>
           <div class="stat-label">Error Events</div>
-          <div class="stat-value" style="font-size: 1.5rem;"><%= @project.error_events.count %></div>
+          <div class="stat-value" style="font-size: 1.5rem;"><%= @event_counts[:errors] %></div>
         </div>
         <div>
           <div class="stat-label">Performance Events</div>
-          <div class="stat-value" style="font-size: 1.5rem;"><%= @project.performance_events.count %></div>
+          <div class="stat-value" style="font-size: 1.5rem;"><%= @event_counts[:performance] %></div>
         </div>
         <div>
           <div class="stat-label">Created</div>

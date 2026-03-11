@@ -2,7 +2,15 @@
 
 class ProjectsController < ApplicationController
   def index
-    @projects = Project.order(:name)
+    @projects = Project
+      .left_joins(:error_events, :performance_events)
+      .select(
+        "findbug_projects.*",
+        "COUNT(DISTINCT findbug_error_events.id) AS error_count",
+        "COUNT(DISTINCT findbug_performance_events.id) AS perf_count"
+      )
+      .group("findbug_projects.id")
+      .order(:name)
   end
 
   def new
@@ -22,6 +30,10 @@ class ProjectsController < ApplicationController
 
   def show
     @project = Project.find(params[:id])
+    @event_counts = {
+      errors: @project.error_events.count,
+      performance: @project.performance_events.count
+    }
   end
 
   def destroy

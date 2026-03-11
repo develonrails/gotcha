@@ -20,7 +20,6 @@ class CleanupJob < ApplicationJob
       ErrorEvent.where(status: [ ErrorEvent::STATUS_RESOLVED, ErrorEvent::STATUS_IGNORED ])
                 .where("last_seen_at < ?", cutoff)
     )
-    # Very old unresolved errors (3x retention)
     delete_in_batches(
       ErrorEvent.unresolved.where("last_seen_at < ?", (retention_days * 3).days.ago)
     )
@@ -34,10 +33,8 @@ class CleanupJob < ApplicationJob
 
   def delete_in_batches(scope)
     loop do
-      ids = scope.limit(BATCH_SIZE).pluck(:id)
-      break if ids.empty?
-      scope.where(id: ids).delete_all
-      sleep(0.01)
+      deleted = scope.limit(BATCH_SIZE).delete_all
+      break if deleted < BATCH_SIZE
     end
   end
 

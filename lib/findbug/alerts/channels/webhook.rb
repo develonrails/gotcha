@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require "net/http"
-require "json"
-require "uri"
-
 module Findbug
   module Alerts
     module Channels
@@ -11,7 +7,15 @@ module Findbug
         def send_alert(error_event)
           url = config[:url]
           return if url.blank?
-          post_to_webhook(url, build_payload(error_event))
+
+          payload = build_payload(error_event)
+          custom_headers = config[:headers] || {}
+
+          if config[:method]&.upcase == "PUT"
+            put_webhook(url, payload, headers: custom_headers)
+          else
+            post_webhook(url, payload, headers: custom_headers, read_timeout: 10)
+          end
         end
 
         private
@@ -41,17 +45,16 @@ module Findbug
           }
         end
 
-        def post_to_webhook(url, payload)
+        def put_webhook(url, payload, headers: {})
           uri = URI.parse(url)
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = (uri.scheme == "https")
           http.open_timeout = 5
           http.read_timeout = 10
-          method = config[:method]&.upcase || "POST"
-          request = method == "PUT" ? Net::HTTP::Put.new(uri.request_uri) : Net::HTTP::Post.new(uri.request_uri)
+          request = Net::HTTP::Put.new(uri.request_uri)
           request["Content-Type"] = "application/json"
+          headers.each { |key, value| request[key] = value }
           request.body = payload.to_json
-          (config[:headers] || {}).each { |key, value| request[key] = value }
           http.request(request)
         rescue StandardError => e
           Findbug.logger.error("[Findbug] Webhook alert failed: #{e.message}")
