@@ -13,20 +13,13 @@ Originally based on [ITSSOUMIT/findbug](https://github.com/ITSSOUMIT/findbug) by
 ## Quick Start
 
 ```bash
-# Create a directory and download the compose file
-mkdir findbug && cd findbug
 curl -sL https://raw.githubusercontent.com/develonrails/standalone-findbug/main/docker-compose.yml -o docker-compose.yml
-curl -sL https://raw.githubusercontent.com/develonrails/standalone-findbug/main/.env.example -o .env
-
-# Edit .env — set SECRET_KEY_BASE and POSTGRES_PASSWORD
-# Generate a secret: openssl rand -hex 64
-nano .env
-
-# Start
 docker compose up -d
 ```
 
 The dashboard will be available at `http://your-server-ip`. Create a project to get a DSN.
+
+For production, set your own secret key and optional auth in the compose file or via environment variables.
 
 ## Client Configuration
 
@@ -49,8 +42,7 @@ end
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `SECRET_KEY_BASE` | Yes | — | Rails secret key (generate with `openssl rand -hex 64`) |
-| `POSTGRES_PASSWORD` | Yes | `findbug` | PostgreSQL password |
+| `SECRET_KEY_BASE` | No | Built-in default | Rails secret key (override with `openssl rand -hex 64` for production) |
 | `FINDBUG_HOST` | No | `localhost` | Host shown in DSN URLs |
 | `FINDBUG_USERNAME` | No | — | HTTP basic auth username (empty = no auth) |
 | `FINDBUG_PASSWORD` | No | — | HTTP basic auth password |

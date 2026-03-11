@@ -1,6 +1,6 @@
 x-findbug-env: &findbug-env
   DATABASE_URL: postgres://findbug:findbug@postgres:5432/findbug
-  SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+  SECRET_KEY_BASE: ${SECRET_KEY_BASE:-f2a9de933f367f66dd076fc9ac579d078d807a1fb7ad1c3c9c6f8755b2374d8870770e43dcf0dcf5074873cc50efc8304a0e370555116ee21602d7244339c014}
   RAILS_ENV: production
   RAILS_LOG_TO_STDOUT: "true"
   FINDBUG_HOST: ${FINDBUG_HOST:-localhost}
