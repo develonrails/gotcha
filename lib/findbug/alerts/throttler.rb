@@ -3,24 +3,23 @@
 module Findbug
   module Alerts
     class Throttler
-      THROTTLE_KEY_PREFIX = "findbug:alert:throttle:"
+      THROTTLE_KEY_PREFIX = "findbug/alert/throttle/"
 
       class << self
         def throttled?(fingerprint)
-          Storage::ConnectionPool.with { |redis| redis.exists?(throttle_key(fingerprint)) }
+          Rails.cache.exist?(throttle_key(fingerprint))
         rescue StandardError
           false
         end
 
         def record(fingerprint)
-          key = throttle_key(fingerprint)
-          Storage::ConnectionPool.with { |redis| redis.setex(key, throttle_period, Time.now.utc.iso8601) }
+          Rails.cache.write(throttle_key(fingerprint), Time.now.utc.iso8601, expires_in: throttle_period)
         rescue StandardError
           nil
         end
 
         def clear(fingerprint)
-          Storage::ConnectionPool.with { |redis| redis.del(throttle_key(fingerprint)) }
+          Rails.cache.delete(throttle_key(fingerprint))
         rescue StandardError
           nil
         end

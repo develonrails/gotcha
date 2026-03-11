@@ -30,7 +30,7 @@ module Findbug
     end
 
     def enabled?
-      config.enabled && config.redis_url.present?
+      config.enabled
     end
   end
 end

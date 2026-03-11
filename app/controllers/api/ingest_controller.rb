@@ -19,10 +19,10 @@ module Api
         case item[:type]
         when "event", "error"
           event_data = SentryEventMapper.map_error(item[:payload], project_id: @project.id)
-          Findbug::Storage::RedisBuffer.push_error(event_data)
+          PersistErrorJob.perform_later(event_data)
         when "transaction"
           event_data = SentryEventMapper.map_transaction(item[:payload], project_id: @project.id)
-          Findbug::Storage::RedisBuffer.push_performance(event_data)
+          PersistPerformanceJob.perform_later(event_data)
         end
       end
 
@@ -35,10 +35,10 @@ module Api
 
       if payload["type"] == "transaction"
         event_data = SentryEventMapper.map_transaction(payload, project_id: @project.id)
-        Findbug::Storage::RedisBuffer.push_performance(event_data)
+        PersistPerformanceJob.perform_later(event_data)
       else
         event_data = SentryEventMapper.map_error(payload, project_id: @project.id)
-        Findbug::Storage::RedisBuffer.push_error(event_data)
+        PersistErrorJob.perform_later(event_data)
       end
 
       render json: { id: payload["event_id"] || SecureRandom.uuid }, status: :ok

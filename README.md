@@ -8,7 +8,7 @@ Originally based on [ITSSOUMIT/findbug](https://github.com/ITSSOUMIT/findbug) by
 
 - **Multi-project support** — Monitor multiple applications from a single Findbug instance via DSN-based project separation
 - **Sentry SDK compatibility** — Receives data via the standard Sentry envelope protocol (`POST /api/:project_id/envelope/`), so you can use the official `sentry-rails` gem as a client
-- **Independent deployment** — Runs as its own Docker Compose stack with PostgreSQL and Valkey
+- **Independent deployment** — Runs as its own Docker Compose stack with PostgreSQL
 
 ## Quick Start
 
@@ -63,9 +63,7 @@ sentry-rails SDK  →  POST /api/:project_id/envelope/
                             ↓
                      IngestController (authenticate DSN, parse envelope)
                             ↓
-                     Valkey buffer (fast, non-blocking)
-                            ↓
-                     PersistJob (every 30s via SolidQueue)
+                     PersistJob (via SolidQueue)
                             ↓
                      PostgreSQL (error_events, performance_events)
                             ↓
@@ -76,8 +74,8 @@ sentry-rails SDK  →  POST /api/:project_id/envelope/
 
 - Ruby 3.4 / Rails 8.1
 - PostgreSQL 18
-- Valkey 8 (Redis-compatible)
 - SolidQueue for background jobs
+- SolidCache for caching
 - Thruster for HTTP
 
 ## Development

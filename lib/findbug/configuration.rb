@@ -2,13 +2,13 @@
 
 module Findbug
   class Configuration
-    attr_accessor :enabled, :redis_url, :redis_pool_size, :redis_pool_timeout,
+    attr_accessor :enabled,
                   :sample_rate, :ignored_exceptions, :ignored_paths,
                   :performance_enabled, :performance_sample_rate,
                   :slow_request_threshold_ms, :slow_query_threshold_ms,
                   :scrub_fields, :scrub_headers, :scrub_header_names,
-                  :retention_days, :max_buffer_size, :buffer_ttl,
-                  :queue_name, :persist_batch_size, :persist_interval, :auto_persist,
+                  :retention_days,
+                  :queue_name,
                   :web_username, :web_password, :web_path,
                   :release, :environment, :logger
 
@@ -16,9 +16,6 @@ module Findbug
 
     def initialize
       @enabled = true
-      @redis_url = ENV.fetch("FINDBUG_REDIS_URL", "redis://localhost:6379/1")
-      @redis_pool_size = ENV.fetch("FINDBUG_REDIS_POOL_SIZE", 5).to_i
-      @redis_pool_timeout = 1
       @sample_rate = 1.0
       @ignored_exceptions = []
       @ignored_paths = []
@@ -34,12 +31,7 @@ module Findbug
       @scrub_headers = true
       @scrub_header_names = []
       @retention_days = 30
-      @max_buffer_size = 10_000
-      @buffer_ttl = 86_400
       @queue_name = "findbug"
-      @persist_batch_size = 100
-      @persist_interval = 30
-      @auto_persist = true
       @web_username = ENV["FINDBUG_USERNAME"]
       @web_password = ENV["FINDBUG_PASSWORD"]
       @web_path = "/"

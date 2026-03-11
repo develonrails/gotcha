@@ -18,8 +18,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      valkey:
-        condition: service_started
 
   postgres:
     image: postgres:18
@@ -35,12 +33,5 @@ services:
       timeout: 5s
       retries: 10
 
-  valkey:
-    image: valkey/valkey:8-alpine
-    restart: unless-stopped
-    volumes:
-      - valkey-data:/data
-
 volumes:
   postgres-data:
-  valkey-data:

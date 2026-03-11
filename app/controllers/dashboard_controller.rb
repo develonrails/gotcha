@@ -11,9 +11,7 @@ class DashboardController < ApplicationController
     status = {
       status: "ok",
       version: Findbug::VERSION,
-      redis: Findbug::Storage::ConnectionPool.healthy? ? "ok" : "error",
-      database: ErrorEvent.connection.active? ? "ok" : "error",
-      buffer: Findbug::Storage::RedisBuffer.stats
+      database: ErrorEvent.connection.active? ? "ok" : "error"
     }
     render json: status
   rescue StandardError => e
@@ -43,7 +41,6 @@ class DashboardController < ApplicationController
         avg_duration: perf.where("captured_at >= ?", 24.hours.ago).average(:duration_ms)&.round(2) || 0,
         n_plus_one_count: perf.with_n_plus_one.where("captured_at >= ?", 24.hours.ago).count
       },
-      buffer: Findbug::Storage::RedisBuffer.stats,
       timestamp: Time.current.iso8601
     }
   end
