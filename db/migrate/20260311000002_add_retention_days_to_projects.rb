@@ -2,6 +2,6 @@
 
 class AddRetentionDaysToProjects < ActiveRecord::Migration[8.1]
   def change
-    add_column :findbug_projects, :retention_days, :integer, default: 30, null: false
+    add_column :gotcha_projects, :retention_days, :integer, default: 30, null: false
   end
 end

@@ -122,20 +122,20 @@ class AlertsController < ApplicationController
     now = Time.current
     OpenStruct.new(
       id: 0,
-      fingerprint: "findbug-test-alert-#{now.to_i}",
-      exception_class: "Findbug::TestAlert",
-      message: "This is a test alert from the Findbug dashboard. If you see this, your alert channel is working correctly!",
+      fingerprint: "gotcha-test-alert-#{now.to_i}",
+      exception_class: "Gotcha::TestAlert",
+      message: "This is a test alert from the Gotcha dashboard. If you see this, your alert channel is working correctly!",
       severity: "error",
       status: "unresolved",
       handled: false,
       occurrence_count: 1,
       first_seen_at: now,
       last_seen_at: now,
-      environment: Findbug.config.environment || "production",
-      release_version: Findbug::VERSION,
+      environment: Gotcha.config.environment || "production",
+      release_version: Gotcha::VERSION,
       backtrace_lines: [
         "app/controllers/alerts_controller.rb:42:in `test'",
-        "lib/findbug/alerts/dispatcher.rb:57:in `send_alerts'"
+        "lib/gotcha/alerts/dispatcher.rb:57:in `send_alerts'"
       ],
       context: {},
       user: nil,

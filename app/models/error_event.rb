@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ErrorEvent < ApplicationRecord
-  self.table_name = "findbug_error_events"
+  self.table_name = "gotcha_error_events"
 
   belongs_to :project, optional: true
 

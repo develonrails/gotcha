@@ -22,7 +22,7 @@ default: &default
 
 development:
   <<: *default
-  database: findbug_standalone_development
+  database: gotcha_development
   host: <%= ENV.fetch("DB_HOST", "localhost") %>
   username: <%= ENV.fetch("POSTGRES_USER", "postgres") %>
   password: <%= ENV.fetch("POSTGRES_PASSWORD", "postgres") %>
@@ -32,7 +32,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: findbug_standalone_test
+  database: gotcha_test
   host: <%= ENV.fetch("DB_HOST", "localhost") %>
   username: <%= ENV.fetch("POSTGRES_USER", "postgres") %>
   password: <%= ENV.fetch("POSTGRES_PASSWORD", "postgres") %>

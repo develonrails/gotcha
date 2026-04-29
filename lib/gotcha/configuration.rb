@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Findbug
+module Gotcha
   class Configuration
     attr_accessor :enabled,
                   :sample_rate, :ignored_exceptions, :ignored_paths,
@@ -31,12 +31,12 @@ module Findbug
       @scrub_headers = true
       @scrub_header_names = []
       @retention_days = 30
-      @queue_name = "findbug"
-      @web_username = ENV["FINDBUG_USERNAME"]
-      @web_password = ENV["FINDBUG_PASSWORD"]
+      @queue_name = "gotcha"
+      @web_username = ENV["GOTCHA_USERNAME"]
+      @web_password = ENV["GOTCHA_PASSWORD"]
       @web_path = "/"
       @alerts = AlertConfiguration.new
-      @release = ENV["FINDBUG_RELEASE"]
+      @release = ENV["GOTCHA_RELEASE"]
       @environment = nil
       @logger = nil
     end

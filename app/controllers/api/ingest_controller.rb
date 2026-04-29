@@ -28,7 +28,7 @@ module Api
 
       render json: { id: SecureRandom.uuid }, status: :ok
     rescue StandardError => e
-      Rails.logger.error("[Findbug] Envelope ingestion failed: #{e.class}: #{e.message}")
+      Rails.logger.error("[Gotcha] Envelope ingestion failed: #{e.class}: #{e.message}")
       render json: { error: "Ingestion failed" }, status: :bad_request
     end
 

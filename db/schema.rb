@@ -10,22 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_10_000004) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_29_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
-  create_table "findbug_alert_channels", force: :cascade do |t|
+  create_table "gotcha_alert_channels", force: :cascade do |t|
     t.string "channel_type", null: false
     t.text "config_data"
     t.datetime "created_at", null: false
     t.boolean "enabled", default: false
     t.string "name", null: false
     t.datetime "updated_at", null: false
-    t.index ["channel_type"], name: "index_findbug_alert_channels_on_channel_type"
-    t.index ["enabled"], name: "index_findbug_alert_channels_on_enabled"
+    t.index ["channel_type"], name: "index_gotcha_alert_channels_on_channel_type"
+    t.index ["enabled"], name: "index_gotcha_alert_channels_on_enabled"
   end
 
-  create_table "findbug_error_events", force: :cascade do |t|
+  create_table "gotcha_error_events", force: :cascade do |t|
     t.text "backtrace"
     t.jsonb "context", default: {}
     t.datetime "created_at", null: false
@@ -44,19 +44,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_000004) do
     t.string "source"
     t.string "status", default: "unresolved"
     t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "index_findbug_error_events_on_created_at"
-    t.index ["exception_class", "created_at"], name: "index_findbug_error_events_on_exception_class_and_created_at"
-    t.index ["exception_class"], name: "index_findbug_error_events_on_exception_class"
-    t.index ["fingerprint"], name: "index_findbug_error_events_on_fingerprint"
-    t.index ["last_seen_at"], name: "index_findbug_error_events_on_last_seen_at"
+    t.index ["created_at"], name: "index_gotcha_error_events_on_created_at"
+    t.index ["exception_class", "created_at"], name: "index_gotcha_error_events_on_exception_class_and_created_at"
+    t.index ["exception_class"], name: "index_gotcha_error_events_on_exception_class"
+    t.index ["fingerprint"], name: "index_gotcha_error_events_on_fingerprint"
+    t.index ["last_seen_at"], name: "index_gotcha_error_events_on_last_seen_at"
     t.index ["project_id", "fingerprint"], name: "idx_error_events_project_fingerprint"
-    t.index ["project_id"], name: "index_findbug_error_events_on_project_id"
-    t.index ["severity"], name: "index_findbug_error_events_on_severity"
-    t.index ["status", "last_seen_at"], name: "index_findbug_error_events_on_status_and_last_seen_at"
-    t.index ["status"], name: "index_findbug_error_events_on_status"
+    t.index ["project_id"], name: "index_gotcha_error_events_on_project_id"
+    t.index ["severity"], name: "index_gotcha_error_events_on_severity"
+    t.index ["status", "last_seen_at"], name: "index_gotcha_error_events_on_status_and_last_seen_at"
+    t.index ["status"], name: "index_gotcha_error_events_on_status"
   end
 
-  create_table "findbug_performance_events", force: :cascade do |t|
+  create_table "gotcha_performance_events", force: :cascade do |t|
     t.datetime "captured_at"
     t.jsonb "context", default: {}
     t.datetime "created_at", null: false
@@ -81,22 +81,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_000004) do
     t.index ["captured_at"], name: "idx_fb_perf_captured_at"
     t.index ["duration_ms"], name: "idx_fb_perf_duration"
     t.index ["has_n_plus_one"], name: "idx_fb_perf_n_plus_one"
-    t.index ["project_id"], name: "index_findbug_performance_events_on_project_id"
+    t.index ["project_id"], name: "index_gotcha_performance_events_on_project_id"
     t.index ["transaction_name", "captured_at"], name: "idx_fb_perf_txn_captured"
     t.index ["transaction_name"], name: "idx_fb_perf_txn_name"
     t.index ["transaction_type"], name: "idx_fb_perf_txn_type"
   end
 
-  create_table "findbug_projects", force: :cascade do |t|
+  create_table "gotcha_projects", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "dsn_key", null: false
     t.string "name", null: false
     t.string "platform", default: "ruby"
     t.datetime "updated_at", null: false
-    t.index ["dsn_key"], name: "index_findbug_projects_on_dsn_key", unique: true
-    t.index ["name"], name: "index_findbug_projects_on_name"
+    t.index ["dsn_key"], name: "index_gotcha_projects_on_dsn_key", unique: true
+    t.index ["name"], name: "index_gotcha_projects_on_name"
   end
 
-  add_foreign_key "findbug_error_events", "findbug_projects", column: "project_id"
-  add_foreign_key "findbug_performance_events", "findbug_projects", column: "project_id"
+  add_foreign_key "gotcha_error_events", "gotcha_projects", column: "project_id"
+  add_foreign_key "gotcha_performance_events", "gotcha_projects", column: "project_id"
 end

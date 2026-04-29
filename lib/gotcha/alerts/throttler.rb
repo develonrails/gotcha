@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-module Findbug
+module Gotcha
   module Alerts
     class Throttler
-      THROTTLE_KEY_PREFIX = "findbug/alert/throttle/"
+      THROTTLE_KEY_PREFIX = "gotcha/alert/throttle/"
 
       class << self
         def throttled?(fingerprint)
@@ -31,7 +31,7 @@ module Findbug
         end
 
         def throttle_period
-          Findbug.config.alerts.throttle_period
+          Gotcha.config.alerts.throttle_period
         end
       end
     end

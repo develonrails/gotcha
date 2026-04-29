@@ -18,7 +18,12 @@ require "action_view/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module FindbugStandalone
+# Load the Gotcha business-logic module (VERSION, configure, logger, etc.)
+# before defining Gotcha::Application — otherwise Zeitwerk skips lib/gotcha.rb
+# because the Gotcha constant is already taken by Application's outer module.
+require_relative "../lib/gotcha"
+
+module Gotcha
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1

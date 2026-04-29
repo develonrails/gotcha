@@ -1,29 +1,29 @@
-x-findbug-env: &findbug-env
-  DATABASE_URL: postgres://findbug:findbug@postgres:5432/findbug
+x-gotcha-env: &gotcha-env
+  DATABASE_URL: postgres://gotcha:gotcha@postgres:5432/gotcha
   SECRET_KEY_BASE: ${SECRET_KEY_BASE:-f2a9de933f367f66dd076fc9ac579d078d807a1fb7ad1c3c9c6f8755b2374d8870770e43dcf0dcf5074873cc50efc8304a0e370555116ee21602d7244339c014}
   RAILS_ENV: production
   RAILS_LOG_TO_STDOUT: "true"
-  FINDBUG_HOST: ${FINDBUG_HOST:-localhost}
-  FINDBUG_USERNAME: ${FINDBUG_USERNAME:-}
-  FINDBUG_PASSWORD: ${FINDBUG_PASSWORD:-}
+  GOTCHA_HOST: ${GOTCHA_HOST:-localhost}
+  GOTCHA_USERNAME: ${GOTCHA_USERNAME:-}
+  GOTCHA_PASSWORD: ${GOTCHA_PASSWORD:-}
 
 services:
   web:
-    image: ghcr.io/develonrails/standalone-findbug:latest
+    image: ghcr.io/develonrails/gotcha:latest
     ports:
       - "${PORT:-80}:80"
     environment:
-      <<: *findbug-env
+      <<: *gotcha-env
     depends_on:
       postgres:
         condition: service_healthy
     restart: unless-stopped
 
   worker:
-    image: ghcr.io/develonrails/standalone-findbug:latest
+    image: ghcr.io/develonrails/gotcha:latest
     command: bundle exec rails solid_queue:start
     environment:
-      <<: *findbug-env
+      <<: *gotcha-env
     depends_on:
       postgres:
         condition: service_healthy
@@ -34,11 +34,11 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql
     environment:
-      POSTGRES_USER: findbug
-      POSTGRES_PASSWORD: findbug
-      POSTGRES_DB: findbug
+      POSTGRES_USER: gotcha
+      POSTGRES_PASSWORD: gotcha
+      POSTGRES_DB: gotcha
     healthcheck:
-      test: pg_isready -U findbug
+      test: pg_isready -U gotcha
       interval: 2s
       timeout: 5s
       retries: 10

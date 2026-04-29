@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Findbug
+module Gotcha
   module Alerts
     module Channels
       class Discord < Base
@@ -14,7 +14,7 @@ module Findbug
 
         def build_payload(error_event)
           {
-            username: config[:username] || "Findbug",
+            username: config[:username] || "Gotcha",
             avatar_url: config[:avatar_url],
             embeds: [ {
               title: error_event.exception_class.truncate(256),
@@ -22,7 +22,7 @@ module Findbug
               color: severity_color_decimal(error_event.severity),
               url: error_url(error_event),
               fields: build_fields(error_event),
-              footer: { text: "Findbug | #{error_event.environment}" },
+              footer: { text: "Gotcha | #{error_event.environment}" },
               timestamp: error_event.last_seen_at.iso8601
             }.compact ]
           }.compact

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-module Findbug
+module Gotcha
   module Alerts
     class Dispatcher
       class << self
         def notify(error_event, async: true)
-          return unless Findbug.enabled?
+          return unless Gotcha.enabled?
           return unless any_enabled?
           return unless should_alert?(error_event)
           return if throttled?(error_event)
@@ -23,7 +23,7 @@ module Findbug
             channel_instance = channel_record.channel_class.new(channel_record.config.symbolize_keys)
             channel_instance.send_alert(error_event)
           rescue StandardError => e
-            Findbug.logger.error("[Findbug] Failed to send alert to #{channel_record.name}: #{e.message}")
+            Gotcha.logger.error("[Gotcha] Failed to send alert to #{channel_record.name}: #{e.message}")
           end
         end
 

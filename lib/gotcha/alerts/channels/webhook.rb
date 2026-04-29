@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Findbug
+module Gotcha
   module Alerts
     module Channels
       class Webhook < Base
@@ -24,7 +24,7 @@ module Findbug
           {
             event_type: "error",
             timestamp: Time.now.utc.iso8601,
-            findbug_version: Findbug::VERSION,
+            gotcha_version: Gotcha::VERSION,
             error: {
               id: error_event.id,
               fingerprint: error_event.fingerprint,
@@ -57,7 +57,7 @@ module Findbug
           request.body = payload.to_json
           http.request(request)
         rescue StandardError => e
-          Findbug.logger.error("[Findbug] Webhook alert failed: #{e.message}")
+          Gotcha.logger.error("[Gotcha] Webhook alert failed: #{e.message}")
         end
       end
     end

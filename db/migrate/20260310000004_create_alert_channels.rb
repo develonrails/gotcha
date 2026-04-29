@@ -2,7 +2,7 @@
 
 class CreateAlertChannels < ActiveRecord::Migration[8.1]
   def change
-    create_table :findbug_alert_channels do |t|
+    create_table :gotcha_alert_channels do |t|
       t.string :channel_type, null: false
       t.string :name, null: false
       t.boolean :enabled, default: false
@@ -11,7 +11,7 @@ class CreateAlertChannels < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :findbug_alert_channels, :channel_type
-    add_index :findbug_alert_channels, :enabled
+    add_index :gotcha_alert_channels, :channel_type
+    add_index :gotcha_alert_channels, :enabled
   end
 end

@@ -10,7 +10,7 @@ class DashboardController < ApplicationController
   def health
     status = {
       status: "ok",
-      version: Findbug::VERSION,
+      version: Gotcha::VERSION,
       database: ErrorEvent.connection.active? ? "ok" : "error"
     }
     render json: status

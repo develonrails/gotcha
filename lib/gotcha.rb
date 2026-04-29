@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Findbug
+module Gotcha
   VERSION = "1.0.0"
 
   class Error < StandardError; end

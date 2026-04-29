@@ -4,7 +4,7 @@ require "net/http"
 require "json"
 require "uri"
 
-module Findbug
+module Gotcha
   module Alerts
     module Channels
       class Base
@@ -33,7 +33,7 @@ module Findbug
         end
 
         def error_url(error_event)
-          base_url = ENV.fetch("FINDBUG_BASE_URL", nil)
+          base_url = ENV.fetch("GOTCHA_BASE_URL", nil)
           return nil unless base_url
           "#{base_url}/errors/#{error_event.id}"
         end
@@ -50,7 +50,7 @@ module Findbug
           request.body = payload.to_json
           http.request(request)
         rescue StandardError => e
-          Findbug.logger.error("[Findbug] #{self.class.name.demodulize} alert failed: #{e.message}")
+          Gotcha.logger.error("[Gotcha] #{self.class.name.demodulize} alert failed: #{e.message}")
         end
       end
     end

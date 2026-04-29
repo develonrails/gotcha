@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# SentryEventMapper translates Sentry SDK event fields to Findbug models.
+# SentryEventMapper translates Sentry SDK event fields to Gotcha models.
 #
-# Sentry Field                          → Findbug Field
+# Sentry Field                          → Gotcha Field
 # exception.values[0].type              → exception_class
 # exception.values[0].value             → message
 # exception.values[0].stacktrace.frames → backtrace
@@ -16,7 +16,7 @@
 # start_timestamp / timestamp           → duration_ms (calculated)
 #
 class SentryEventMapper
-  # Map a Sentry error event to Findbug ErrorEvent data
+  # Map a Sentry error event to Gotcha ErrorEvent data
   def self.map_error(payload, project_id: nil)
     exception = extract_exception(payload)
     exception_class = exception&.dig("type") || payload["logger"] || "UnknownError"
@@ -40,7 +40,7 @@ class SentryEventMapper
     }
   end
 
-  # Map a Sentry transaction to Findbug PerformanceEvent data
+  # Map a Sentry transaction to Gotcha PerformanceEvent data
   def self.map_transaction(payload, project_id: nil)
     start_ts = parse_timestamp(payload["start_timestamp"])
     end_ts = parse_timestamp(payload["timestamp"])
