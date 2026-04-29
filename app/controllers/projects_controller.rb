@@ -3,13 +3,11 @@
 class ProjectsController < ApplicationController
   def index
     @projects = Project
-      .left_joins(:error_events, :performance_events)
       .select(
         "gotcha_projects.*",
-        "COUNT(DISTINCT gotcha_error_events.id) AS error_count",
-        "COUNT(DISTINCT gotcha_performance_events.id) AS perf_count"
+        "(SELECT COUNT(*) FROM gotcha_error_events WHERE project_id = gotcha_projects.id) AS error_count",
+        "(SELECT COUNT(*) FROM gotcha_performance_events WHERE project_id = gotcha_projects.id) AS perf_count"
       )
-      .group("gotcha_projects.id")
       .order(:name)
   end
 
@@ -30,10 +28,7 @@ class ProjectsController < ApplicationController
 
   def show
     @project = Project.find(params[:id])
-    @event_counts = {
-      errors: @project.error_events.count,
-      performance: @project.performance_events.count
-    }
+    @event_counts = @project.event_counts
   end
 
   def update
@@ -43,10 +38,7 @@ class ProjectsController < ApplicationController
       redirect_to @project
     else
       flash_error @project.errors.full_messages.join(", ")
-      @event_counts = {
-        errors: @project.error_events.count,
-        performance: @project.performance_events.count
-      }
+      @event_counts = @project.event_counts
       render :show, status: :unprocessable_entity
     end
   end

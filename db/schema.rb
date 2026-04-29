@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_29_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_29_000004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
 
   create_table "gotcha_alert_channels", force: :cascade do |t|
     t.string "channel_type", null: false
@@ -46,14 +47,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_29_000001) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_gotcha_error_events_on_created_at"
     t.index ["exception_class", "created_at"], name: "index_gotcha_error_events_on_exception_class_and_created_at"
-    t.index ["exception_class"], name: "index_gotcha_error_events_on_exception_class"
+    t.index ["exception_class"], name: "idx_gotcha_error_events_exception_class_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["fingerprint"], name: "index_gotcha_error_events_on_fingerprint"
     t.index ["last_seen_at"], name: "index_gotcha_error_events_on_last_seen_at"
-    t.index ["project_id", "fingerprint"], name: "idx_error_events_project_fingerprint"
+    t.index ["message"], name: "idx_gotcha_error_events_message_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["project_id", "fingerprint"], name: "idx_error_events_project_fingerprint", unique: true
     t.index ["project_id"], name: "index_gotcha_error_events_on_project_id"
     t.index ["severity"], name: "index_gotcha_error_events_on_severity"
     t.index ["status", "last_seen_at"], name: "index_gotcha_error_events_on_status_and_last_seen_at"
-    t.index ["status"], name: "index_gotcha_error_events_on_status"
   end
 
   create_table "gotcha_performance_events", force: :cascade do |t|

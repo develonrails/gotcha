@@ -30,40 +30,46 @@ class ErrorEvent < ApplicationRecord
   scope :last_30_days, -> { where("last_seen_at >= ?", 30.days.ago) }
 
   def self.upsert_from_event(event_data)
-    fingerprint = event_data[:fingerprint]
-    project_id = event_data[:project_id]
+    now = Time.current
+    attrs = {
+      fingerprint: event_data[:fingerprint],
+      exception_class: event_data[:exception_class],
+      message: event_data[:message],
+      backtrace: serialize_backtrace(event_data[:backtrace]),
+      context: event_data[:context] || {},
+      request_data: event_data[:context]&.dig(:request) || event_data[:request_data] || {},
+      environment: event_data[:environment],
+      release_version: event_data[:release],
+      severity: event_data[:severity] || SEVERITY_ERROR,
+      source: event_data[:source] || "sentry_sdk",
+      handled: event_data[:handled] || false,
+      occurrence_count: 1,
+      first_seen_at: now,
+      last_seen_at: now,
+      status: STATUS_UNRESOLVED,
+      project_id: event_data[:project_id],
+      created_at: now,
+      updated_at: now
+    }
 
-    transaction do
-      existing = find_by(fingerprint: fingerprint, project_id: project_id)
+    result = upsert_all(
+      [ attrs ],
+      unique_by: %i[project_id fingerprint],
+      on_duplicate: Arel.sql(<<~SQL.squish),
+        occurrence_count = gotcha_error_events.occurrence_count + 1,
+        last_seen_at = EXCLUDED.last_seen_at,
+        context = COALESCE(gotcha_error_events.context, '{}'::jsonb) || COALESCE(EXCLUDED.context, '{}'::jsonb),
+        status = CASE
+                   WHEN gotcha_error_events.status = '#{STATUS_RESOLVED}'
+                   THEN '#{STATUS_UNRESOLVED}'
+                   ELSE gotcha_error_events.status
+                 END,
+        updated_at = EXCLUDED.updated_at
+      SQL
+      returning: %w[id]
+    )
 
-      if existing
-        existing.occurrence_count += 1
-        existing.last_seen_at = Time.current
-        existing.context = merge_contexts(existing.context, event_data[:context])
-        existing.status = STATUS_UNRESOLVED if existing.status == STATUS_RESOLVED
-        existing.save!
-        existing
-      else
-        create!(
-          fingerprint: fingerprint,
-          exception_class: event_data[:exception_class],
-          message: event_data[:message],
-          backtrace: serialize_backtrace(event_data[:backtrace]),
-          context: event_data[:context] || {},
-          request_data: event_data[:context]&.dig(:request) || event_data[:request_data] || {},
-          environment: event_data[:environment],
-          release_version: event_data[:release],
-          severity: event_data[:severity] || SEVERITY_ERROR,
-          source: event_data[:source] || "sentry_sdk",
-          handled: event_data[:handled] || false,
-          occurrence_count: 1,
-          first_seen_at: Time.current,
-          last_seen_at: Time.current,
-          status: STATUS_UNRESOLVED,
-          project_id: project_id
-        )
-      end
-    end
+    find(result.rows.first.first)
   end
 
   def resolve!
