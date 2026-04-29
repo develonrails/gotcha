@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AlertChannel < ApplicationRecord
-  self.table_name = "findbug_alert_channels"
+  self.table_name = "gotcha_alert_channels"
 
   CHANNEL_TYPES = %w[email slack discord webhook].freeze
 
@@ -32,10 +32,10 @@ class AlertChannel < ApplicationRecord
 
   def channel_class
     case channel_type
-    when "email"   then Findbug::Alerts::Channels::Email
-    when "slack"   then Findbug::Alerts::Channels::Slack
-    when "discord" then Findbug::Alerts::Channels::Discord
-    when "webhook" then Findbug::Alerts::Channels::Webhook
+    when "email"   then Gotcha::Alerts::Channels::Email
+    when "slack"   then Gotcha::Alerts::Channels::Slack
+    when "discord" then Gotcha::Alerts::Channels::Discord
+    when "webhook" then Gotcha::Alerts::Channels::Webhook
     end
   end
 
@@ -48,14 +48,14 @@ class AlertChannel < ApplicationRecord
     case channel_type
     when "email"
       masked["Recipients"] = Array(config["recipients"]).join(", ").presence || "None"
-      masked["From"] = config["from"] || "findbug@localhost"
+      masked["From"] = config["from"] || "gotcha@localhost"
     when "slack"
       masked["Webhook URL"] = mask_url(config["webhook_url"])
       masked["Channel"] = config["channel"] || "Default"
-      masked["Username"] = config["username"] || "Findbug"
+      masked["Username"] = config["username"] || "Gotcha"
     when "discord"
       masked["Webhook URL"] = mask_url(config["webhook_url"])
-      masked["Username"] = config["username"] || "Findbug"
+      masked["Username"] = config["username"] || "Gotcha"
     when "webhook"
       masked["URL"] = mask_url(config["url"])
       masked["Method"] = (config["method"] || "POST").upcase

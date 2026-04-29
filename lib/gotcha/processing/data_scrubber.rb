@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Findbug
+module Gotcha
   module Processing
     class DataScrubber
       FILTERED = "[FILTERED]"
@@ -51,7 +51,7 @@ module Findbug
               private_key privatekey credit_card creditcard card_number cardnumber
               cvv cvc ssn social_security authorization auth bearer cookie session csrf
             ]
-            (default_fields + Findbug.config.scrub_fields.map(&:to_s)).uniq
+            (default_fields + Gotcha.config.scrub_fields.map(&:to_s)).uniq
           end
         end
 

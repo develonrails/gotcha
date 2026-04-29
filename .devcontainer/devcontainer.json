@@ -1,8 +1,8 @@
 {
-  "name": "findbug",
+  "name": "gotcha",
   "dockerComposeFile": "compose.yaml",
   "service": "rails-app",
-  "workspaceFolder": "/workspaces/findbug-standalone",
+  "workspaceFolder": "/workspaces/gotcha",
 
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},

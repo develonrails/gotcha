@@ -5,11 +5,11 @@ class ProjectsController < ApplicationController
     @projects = Project
       .left_joins(:error_events, :performance_events)
       .select(
-        "findbug_projects.*",
-        "COUNT(DISTINCT findbug_error_events.id) AS error_count",
-        "COUNT(DISTINCT findbug_performance_events.id) AS perf_count"
+        "gotcha_projects.*",
+        "COUNT(DISTINCT gotcha_error_events.id) AS error_count",
+        "COUNT(DISTINCT gotcha_performance_events.id) AS perf_count"
       )
-      .group("findbug_projects.id")
+      .group("gotcha_projects.id")
       .order(:name)
   end
 

@@ -1,4 +1,4 @@
-name: "findbug"
+name: "gotcha"
 
 services:
   rails-app:
@@ -7,7 +7,7 @@ services:
       dockerfile: .devcontainer/Dockerfile
 
     volumes:
-      - ../../findbug-standalone:/workspaces/findbug-standalone:cached,z
+      - ../../gotcha:/workspaces/gotcha:cached,z
       - ${SSH_AUTH_SOCK:-/dev/null}:/ssh-agent:ro
 
     environment:

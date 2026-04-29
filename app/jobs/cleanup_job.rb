@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 class CleanupJob < ApplicationJob
-  queue_as :findbug
+  queue_as :gotcha
 
   BATCH_SIZE = 1000
 
   def perform
-    return unless Findbug.enabled?
+    return unless Gotcha.enabled?
 
     Project.find_each do |project|
       days = project.retention_days
@@ -14,7 +14,7 @@ class CleanupJob < ApplicationJob
       cleanup_performance(project, days)
     end
 
-    Rails.logger.info("[Findbug] Cleanup completed")
+    Rails.logger.info("[Gotcha] Cleanup completed")
   end
 
   private

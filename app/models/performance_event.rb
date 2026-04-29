@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PerformanceEvent < ApplicationRecord
-  self.table_name = "findbug_performance_events"
+  self.table_name = "gotcha_performance_events"
 
   belongs_to :project, optional: true
 

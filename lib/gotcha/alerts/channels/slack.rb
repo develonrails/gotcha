@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Findbug
+module Gotcha
   module Alerts
     module Channels
       class Slack < Base
@@ -15,7 +15,7 @@ module Findbug
         def build_payload(error_event)
           {
             channel: config[:channel],
-            username: config[:username] || "Findbug",
+            username: config[:username] || "Gotcha",
             icon_emoji: config[:icon_emoji] || ":bug:",
             attachments: [ {
               color: severity_color(error_event.severity),
@@ -23,7 +23,7 @@ module Findbug
               title_link: error_url(error_event),
               text: error_event.message.to_s.truncate(500),
               fields: build_fields(error_event),
-              footer: "Findbug | #{error_event.environment}",
+              footer: "Gotcha | #{error_event.environment}",
               ts: error_event.last_seen_at.to_i
             }.compact ]
           }.compact

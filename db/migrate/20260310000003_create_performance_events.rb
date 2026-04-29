@@ -2,7 +2,7 @@
 
 class CreatePerformanceEvents < ActiveRecord::Migration[8.1]
   def change
-    create_table :findbug_performance_events do |t|
+    create_table :gotcha_performance_events do |t|
       t.string :transaction_name, null: false
       t.string :transaction_type, default: "request"
       t.string :request_method
@@ -21,16 +21,16 @@ class CreatePerformanceEvents < ActiveRecord::Migration[8.1]
       t.string :environment
       t.string :release_version
       t.datetime :captured_at
-      t.references :project, foreign_key: { to_table: :findbug_projects }
+      t.references :project, foreign_key: { to_table: :gotcha_projects }
 
       t.timestamps
     end
 
-    add_index :findbug_performance_events, :transaction_name, name: "idx_fb_perf_txn_name"
-    add_index :findbug_performance_events, :transaction_type, name: "idx_fb_perf_txn_type"
-    add_index :findbug_performance_events, :captured_at, name: "idx_fb_perf_captured_at"
-    add_index :findbug_performance_events, :duration_ms, name: "idx_fb_perf_duration"
-    add_index :findbug_performance_events, :has_n_plus_one, name: "idx_fb_perf_n_plus_one"
-    add_index :findbug_performance_events, [ :transaction_name, :captured_at ], name: "idx_fb_perf_txn_captured"
+    add_index :gotcha_performance_events, :transaction_name, name: "idx_fb_perf_txn_name"
+    add_index :gotcha_performance_events, :transaction_type, name: "idx_fb_perf_txn_type"
+    add_index :gotcha_performance_events, :captured_at, name: "idx_fb_perf_captured_at"
+    add_index :gotcha_performance_events, :duration_ms, name: "idx_fb_perf_duration"
+    add_index :gotcha_performance_events, :has_n_plus_one, name: "idx_fb_perf_n_plus_one"
+    add_index :gotcha_performance_events, [ :transaction_name, :captured_at ], name: "idx_fb_perf_txn_captured"
   end
 end

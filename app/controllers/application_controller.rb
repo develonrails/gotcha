@@ -12,11 +12,11 @@ class ApplicationController < ActionController::Base
   private
 
   def authenticate!
-    return true unless Findbug.config.web_enabled?
+    return true unless Gotcha.config.web_enabled?
 
-    authenticate_or_request_with_http_basic("Findbug") do |username, password|
-      ActiveSupport::SecurityUtils.secure_compare(username.to_s, Findbug.config.web_username.to_s) &&
-        ActiveSupport::SecurityUtils.secure_compare(password.to_s, Findbug.config.web_password.to_s)
+    authenticate_or_request_with_http_basic("Gotcha") do |username, password|
+      ActiveSupport::SecurityUtils.secure_compare(username.to_s, Gotcha.config.web_username.to_s) &&
+        ActiveSupport::SecurityUtils.secure_compare(password.to_s, Gotcha.config.web_password.to_s)
     end
   end
 

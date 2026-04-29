@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Findbug
+module Gotcha
   module Alerts
     module Channels
       class Email < Base
@@ -9,9 +9,9 @@ module Findbug
           return if recipients.blank?
 
           if defined?(ActionMailer::Base)
-            FindbugMailer.error_alert(error_event, recipients).deliver_later
+            GotchaMailer.error_alert(error_event, recipients).deliver_later
           else
-            Findbug.logger.warn("[Findbug] ActionMailer not available for email alerts")
+            Gotcha.logger.warn("[Gotcha] ActionMailer not available for email alerts")
           end
         end
       end
