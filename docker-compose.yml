@@ -17,6 +17,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 60s
     restart: unless-stopped
 
   worker:
@@ -26,6 +32,8 @@ services:
       <<: *gotcha-env
     depends_on:
       postgres:
+        condition: service_healthy
+      web:
         condition: service_healthy
     restart: unless-stopped
 
