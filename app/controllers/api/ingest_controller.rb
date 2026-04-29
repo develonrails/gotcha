@@ -18,10 +18,10 @@ module Api
       items.each do |item|
         case item[:type]
         when "event", "error"
-          event_data = SentryEventMapper.map_error(item[:payload], project_id: @project.id)
+          event_data = SentryEventMapper.map_error(item[:payload], project_id: @project_id)
           PersistErrorJob.perform_later(event_data)
         when "transaction"
-          event_data = SentryEventMapper.map_transaction(item[:payload], project_id: @project.id)
+          event_data = SentryEventMapper.map_transaction(item[:payload], project_id: @project_id)
           PersistPerformanceJob.perform_later(event_data)
         end
       end
@@ -37,10 +37,10 @@ module Api
       payload = JSON.parse(@raw_body)
 
       if payload["type"] == "transaction"
-        event_data = SentryEventMapper.map_transaction(payload, project_id: @project.id)
+        event_data = SentryEventMapper.map_transaction(payload, project_id: @project_id)
         PersistPerformanceJob.perform_later(event_data)
       else
-        event_data = SentryEventMapper.map_error(payload, project_id: @project.id)
+        event_data = SentryEventMapper.map_error(payload, project_id: @project_id)
         PersistErrorJob.perform_later(event_data)
       end
 
@@ -51,14 +51,17 @@ module Api
 
     private
 
-    # Authenticate via DSN key in URL or X-Sentry-Auth header
+    # Authenticate via DSN key in URL or X-Sentry-Auth header. The DSN lookup
+    # is cached because every ingest request hits this path; invalidation
+    # happens via Project's after_commit hook.
     def authenticate_dsn!
       dsn_key = extract_dsn_key
       project_id = params[:project_id]
+      cached_dsn = Project.cached_dsn_key_for(project_id)
 
-      @project = Project.find_by(id: project_id)
-
-      unless @project && ActiveSupport::SecurityUtils.secure_compare(@project.dsn_key, dsn_key.to_s)
+      if cached_dsn && ActiveSupport::SecurityUtils.secure_compare(cached_dsn, dsn_key.to_s)
+        @project_id = project_id.to_i
+      else
         render json: { error: "Invalid DSN" }, status: :unauthorized
       end
     end

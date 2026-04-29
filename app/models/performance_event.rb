@@ -46,21 +46,34 @@ class PerformanceEvent < ApplicationRecord
   end
 
   def self.aggregate_for(transaction_name, since: 24.hours.ago)
-    events = where(transaction_name: transaction_name).where("captured_at >= ?", since)
-    return nil if events.empty?
+    result = where(transaction_name: transaction_name)
+              .where("captured_at >= ?", since)
+              .pick(
+                Arel.sql("COUNT(*)"),
+                Arel.sql("AVG(duration_ms)"),
+                Arel.sql("MIN(duration_ms)"),
+                Arel.sql("MAX(duration_ms)"),
+                Arel.sql("PERCENTILE_CONT(0.5)  WITHIN GROUP (ORDER BY duration_ms)"),
+                Arel.sql("PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY duration_ms)"),
+                Arel.sql("PERCENTILE_CONT(0.99) WITHIN GROUP (ORDER BY duration_ms)"),
+                Arel.sql("AVG(query_count)"),
+                Arel.sql("COUNT(*) FILTER (WHERE has_n_plus_one)")
+              )
 
-    durations = events.pluck(:duration_ms).sort
+    count, avg, min, max, p50, p95, p99, avg_queries, n_plus_one = result
+    return nil if count.to_i.zero?
+
     {
       transaction_name: transaction_name,
-      count: events.count,
-      avg_duration_ms: durations.sum / durations.size.to_f,
-      min_duration_ms: durations.first,
-      max_duration_ms: durations.last,
-      p50_duration_ms: percentile(durations, 50),
-      p95_duration_ms: percentile(durations, 95),
-      p99_duration_ms: percentile(durations, 99),
-      avg_query_count: events.average(:query_count).to_f.round(1),
-      n_plus_one_count: events.where(has_n_plus_one: true).count
+      count: count,
+      avg_duration_ms: avg.to_f,
+      min_duration_ms: min,
+      max_duration_ms: max,
+      p50_duration_ms: p50,
+      p95_duration_ms: p95,
+      p99_duration_ms: p99,
+      avg_query_count: avg_queries.to_f.round(1),
+      n_plus_one_count: n_plus_one
     }
   end
 
@@ -150,14 +163,6 @@ class PerformanceEvent < ApplicationRecord
   end
 
   private
-
-  def self.percentile(sorted_array, percentile)
-    return 0 if sorted_array.empty?
-    k = (percentile / 100.0) * (sorted_array.length - 1)
-    f = k.floor
-    c = k.ceil
-    f == c ? sorted_array[f] : sorted_array[f] + (k - f) * (sorted_array[c] - sorted_array[f])
-  end
 
   def self.parse_captured_at(value)
     case value
