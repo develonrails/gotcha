@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
-# Create or migrate existing database on every container start
+# Create or migrate every configured database (primary, cache, queue) on
+# every container start. db:prepare iterates all DB configs from
+# database.yml and runs pending migrations from each one's migrations_paths.
 ./bin/rails db:prepare
-./bin/rails db:prepare:cache 2>/dev/null || true
-./bin/rails db:prepare:queue 2>/dev/null || true
 
 exec "${@}"
